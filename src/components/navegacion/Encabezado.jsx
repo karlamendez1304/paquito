@@ -144,12 +144,12 @@ const Encabezado = () => {
           <img
             alt=" "
             src={logo}
-            width="45"
-            height="45"
+            width="60"
+            height="60"
             className="d-inline-block me-2"
           />
           <strong>
-            <h4 className="mb-0">Discosa</h4>
+            <h4 className="mb-0 titulo-velvet">Velvet Cafe</h4>
           </strong>
         </Navbar.Brand>
 
@@ -167,7 +167,7 @@ const Encabezado = () => {
           onHide={() => setMostrarMenu(false)}
         >
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Menú Discosa</Offcanvas.Title>
+            <Offcanvas.Title>Menú </Offcanvas.Title>
           </Offcanvas.Header>
 
           <Offcanvas.Body>

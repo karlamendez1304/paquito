@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, Row, Col, Button, Image, Spinner } from "react-bootstrap";
 
-const TarjetaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion }) => {
+const TarjetaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion, generarQRImagen }) => {
     const [cargando, setCargando] = useState(true);
     const [idTarjetaActiva, setIdTarjetaActiva] = useState(null);
 
@@ -43,8 +43,8 @@ const TarjetaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion 
                             >
                                 <Card.Body
                                     className={`p-2 tarjeta-producto-cuerpo ${tarjetaActiva
-                                            ? "tarjeta-producto-cuerpo-activo"
-                                            : "tarjeta-producto-cuerpo-inactivo"
+                                        ? "tarjeta-producto-cuerpo-activo"
+                                        : "tarjeta-producto-cuerpo-inactivo"
                                         }`}
                                 >
                                     <Row className="align-items-center gx-3">
@@ -107,6 +107,17 @@ const TarjetaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion 
                                                 }}
                                             >
                                                 <i className="bi bi-trash"></i>
+                                            </Button>
+                                            <Button
+                                                variant="outline-primary"
+                                                size="sm"
+                                                onClick={() => {
+                                                    generarQRImagen(producto);
+                                                    setIdTarjetaActiva(null);
+                                                }}
+                                                title="Generar código QR de la imagen"
+                                            >
+                                                <i className="bi bi-qr-code"></i>
                                             </Button>
                                         </div>
                                     </div>

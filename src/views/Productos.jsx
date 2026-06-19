@@ -5,11 +5,16 @@ import { supabase } from "../database/supabaseconfing";
 import ModalRegistroProducto from "../components/productos/ModalRegistroProducto";
 import ModalEdicionProducto from "../components/productos/ModalEdicionProducto";
 import ModalEliminacionProducto from "../components/productos/ModalEliminacionProducto";
+import ModalQRProducto from "../components/productos/ModalQRProducto";
 
 import NotificacionOperacion from "../components/NotificacionOperacion";
 import CuadroBusquedas from "../components/busquedas/CuadroBusqueda";
+import Paginacion from "../components/ordenamiento/Paginacion";
 import TablaProductos from "../components/productos/TablaProductos";
 import TarjetaProductos from "../components/productos/TarjetaProductos";
+
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
@@ -340,6 +345,54 @@ const Productos = () => {
     setMostrarModalEliminacion(true);
   };
 
+  const generarPDFProducto = (producto, categorias = []) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Reporte de Producto", 14, 20);
+    doc.line(14, 25, 195, 25);
+
+    // Buscar nombre de la categoría solo si categorias es array
+    let categoriaNombre = "Sin categoría";
+    if (Array.isArray(categorias)) {
+      const categoria = categorias.find(
+        (cat) => cat.id_categoria === producto.categoria_producto,
+      );
+      if (categoria) categoriaNombre = categoria.nombre_categoria;
+    }
+
+    autoTable(doc, {
+      startY: 35,
+      head: [["Campo", "Valor"]],
+      body: [
+        ["ID", producto.id_producto],
+        ["Nombre", producto.nombre_producto],
+        ["Descripción", producto.descripcion_producto || "Sin descripción"],
+        ["Precio", `C$ ${parseFloat(producto.precio_venta).toFixed(2)}`],
+        ["Categoría", categoriaNombre],
+      ],
+    });
+
+    doc.save(`producto_${producto.id_producto}.pdf`);
+  };
+
+  const [mostrarModalQR, setMostrarModalQR] = useState(false);
+  const [productoQR, setProductoQR] = useState(null);
+
+  const generarQRImagen = (producto) => {
+    if (!producto?.url_imagen) {
+      setToast({
+        mostrar: true,
+        mensaje: "Este producto no tiene imagen asociada",
+        tipo: "advertencia",
+      });
+      return;
+    }
+
+    setProductoQR(producto);
+    setMostrarModalQR(true);
+  };
+
   return (
     <Container className="mt-3">
       {/* Título y botón */}
@@ -384,6 +437,10 @@ const Productos = () => {
                 productos={productosFiltrados}
                 abrirModalEdicion={abrirModalEdicion}
                 abrirModalEliminacion={abrirModalEliminacion}
+                generarPDFProducto={generarPDFProducto}
+                categorias={categorias}
+                generarQRImagen={generarQRImagen}
+                
               />
             )
           )}
@@ -403,6 +460,8 @@ const Productos = () => {
               productos={productosFiltrados}
               abrirModalEdicion={abrirModalEdicion}
               abrirModalEliminacion={abrirModalEliminacion}
+              generarPDFProducto={generarPDFProducto}
+              generarQRImagen={generarQRImagen}
             />
           )
         )}
@@ -434,6 +493,12 @@ const Productos = () => {
         setMostrarModalEliminacion={setMostrarModalEliminacion}
         producto={productoAEliminar}
         eliminarProducto={eliminarProducto}
+      />
+
+      <ModalQRProducto
+        mostrar={mostrarModalQR}
+        onHide={() => setMostrarModalQR(false)}
+        producto={productoQR}
       />
 
       {/* Notificación */}

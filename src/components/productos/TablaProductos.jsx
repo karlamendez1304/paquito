@@ -1,8 +1,15 @@
-
 import React from "react";
 import { Table, Button, Image } from "react-bootstrap";
+import categorias from "../../views/Categorias";
 
-const TablaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion }) => {
+const TablaProductos = ({
+  productos,
+  abrirModalEdicion,
+  abrirModalEliminacion,
+  generarPDFProducto,
+  categorias,
+  generarQRImagen,
+}) => {
   return (
     <Table striped hover responsive>
       <thead>
@@ -32,7 +39,9 @@ const TablaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion })
               )}
             </td>
             <td>{producto.nombre_producto}</td>
-            <td className="d-none d-md-table-cell">{producto.descripcion_producto}</td>
+            <td className="d-none d-md-table-cell">
+              {producto.descripcion_producto}
+            </td>
             <td>${producto.precio_venta}</td>
             <td className="text-center">
               <Button
@@ -49,6 +58,25 @@ const TablaProductos = ({ productos, abrirModalEdicion, abrirModalEliminacion })
                 onClick={() => abrirModalEliminacion(producto)}
               >
                 <i className="bi bi-trash"></i>
+              </Button>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                className="m-1"
+                onClick={() => generarPDFProducto(producto, categorias)}
+              >
+                <i className="bi bi-file-earmark-pdf"></i>
+              </Button>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => {
+                  generarQRImagen(producto);
+                  setIdTarjetaActiva(null);
+                }}
+                title="Generar código QR de la imagen"
+              >
+                <i className="bi bi-qr-code"></i>
               </Button>
             </td>
           </tr>
